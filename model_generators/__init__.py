@@ -9,5 +9,6 @@ from model_generators.classification_model_generators import generate_knn_model
 from model_generators.score_model_generators import generate_accuracy_model
 from model_generators.plot_model_generators import generate_accuracy_plot_model
 from model_generators.score_model_generators import generate_KNeighbors_accuracy_model
-from model_generators.tiling_model_generators import generate_tiling_model
+from model_generators.tiling_model_generators import generate_tiling_model, generate_tiles_rects_model, \
+    generate_tiling_model2
 from model_generators.image_model_generators import generate_image_model

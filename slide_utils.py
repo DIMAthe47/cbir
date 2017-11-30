@@ -25,6 +25,12 @@ def openslide_tiles_generator(slide_path, zoom_factor, shape, step_shape):
     del slide
 
 
+def read_openslide_tile(slide: openslide.OpenSlide, downsample, tile_rect):
+    level = slide.get_best_level_for_downsample(downsample)
+    tile = slide.read_region((tile_rect[0], tile_rect[1]), level, (tile_rect[2], tile_rect[3]))
+    return tile
+
+
 def openslide_tiles_generator_factory(computer_func_params):
     zoom_factor = computer_func_params["zoom_factor"]
     shape = computer_func_params["shape"]
@@ -39,6 +45,21 @@ def openslide_tiles_generator_factory(computer_func_params):
     return Computer(computer_)
 
 
+def openslide_tiles_generator2_factory(computer_func_params):
+    # tiles_rects = computer_func_params["tiles_rects"]
+    downsample = computer_func_params["downsample"]
+    image_path = computer_func_params["image_path"]
+    slide = openslide.OpenSlide(image_path)
+    level = slide.get_best_level_for_downsample(downsample)
+
+    def computer_(tile_rect):
+        tile = read_openslide_tile(slide, level, tile_rect)
+        return tile
+
+    return Computer(computer_)
+
+
 image_util_type__computer_factory = {
-    "openslide_tiler": openslide_tiles_generator_factory
+    "openslide_tiler": openslide_tiles_generator_factory,
+    "openslide_tiler2": openslide_tiles_generator2_factory
 }

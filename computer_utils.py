@@ -70,26 +70,9 @@ def stop_recompute_if_not_force(model, force=False, verbose=1):
             pass
 
 
-def compute_model(model, force=False, verbose=1):
-    """
-        решить inmemory или ds можно было бы по наличию/отсутствию output_model: если output_model нет, то это inmemory_computer.
-        но лучше чтоб был и для inmemory output_model, тогда можно будет пробовать кэшировать(например, складывать output_model от
-        inmemory_computer в dict по имени output_model["name"]
-    :param model:
-    :return:
-    """
-    if verbose >= 3:
-        print("compute_model", model)
-    stop_recompute_if_not_force(model, force, verbose)
+# def compute_for_input_as_ndarray(model):
 
-    if "input_model" in model:
-        input_ = read_input_model(model["input_model"], verbose)
-
-    if verbose >= 1:
-        print("model computation start: {}".format(model["name"]))
-
-    start_datetime = datetime.now()
-
+def build_computer(model):
     computer_factory = type__computer_factory[model["computer_func_name"]]
     # print(computer_factory)
     if "computer_func_params" in model:
@@ -98,18 +81,26 @@ def compute_model(model, force=False, verbose=1):
     else:
         computer = computer_factory()
 
-    # print(computer_factory)
     # print(computer)
+    return computer
+
+
+def compute_outputs(model, verbose=1):
+    computer = build_computer(model)
+
+    if "input_model" in model:
+        input_ = read_input_model(model["input_model"], verbose)
+
     if isinstance(input_, np.ndarray):
-        if hasattr(input_, "__len__"):
-            n_inputs = len(input_)
-            shape = computer.get_shape()
-            if shape:
-                outputs = np.empty((n_inputs, *shape), model["dtype"])
-            else:
-                outputs = [0] * n_inputs
+        # if hasattr(input_, "__len__"):
+        n_inputs = len(input_)
+        shape = computer.get_shape()
+        if shape:
+            outputs = np.empty((n_inputs, *shape), model["dtype"])
         else:
-            outputs = []
+            outputs = [0] * n_inputs
+        # else:
+        #     outputs = []
 
         if "chunk_size" in model:
             chunk_from = 0
@@ -122,15 +113,11 @@ def compute_model(model, force=False, verbose=1):
                 outputs[chunk_from:chunk_to] = computer.compute(input_[chunk_from:chunk_to])
                 chunk_from = chunk_to
                 chunk_to += model["chunk_size"]
-        elif n_inputs:
+        else:
             for i, source_ in enumerate(input_):
                 outputs[i] = computer.compute(source_)
-        else:
-            for source_ in input_:
-                output_ = computer.compute(source_)
-                outputs.append(output_)
-        if not shape:
-            outputs = np.array(outputs)
+                # if not shape:
+                #     outputs = np.array(outputs)
     elif isinstance(input_, str):
         outputs = computer.compute(input_)
     elif isinstance(input_, collections.Iterable):
@@ -149,27 +136,55 @@ def compute_model(model, force=False, verbose=1):
         outputs = computer.compute(input_)
     else:
         outputs = computer.compute()
+    return outputs
 
-    # del input_
+
+def save_outputs(outputs, model):
+    output_model = model["output_model"]
+    if output_model["type"] == "ds":
+        if isinstance(outputs, np.ndarray):
+            pass
+        elif isinstance(outputs, collections.Iterable):
+            if "chunk_size" in model:
+                outputs = np.concatenate(outputs)
+            elif isinstance(outputs, list):
+                outputs = np.array(outputs, copy=False)
+            else:
+                outputs = [output_ for output_ in outputs]
+                outputs = np.array(outputs, copy=False)
+        else:
+            raise ValueError("Can`t save outputs of type {} to ds".format(type(outputs)))
+        ds_utils.save_array(outputs, output_model, attrs={"model": model})
+    elif output_model["type"] == "inmemory":
+        pass
+
+
+def compute_model(model, force=False, verbose=1):
+    """
+        решить inmemory или ds можно было бы по наличию/отсутствию output_model: если output_model нет, то это inmemory_computer.
+        но лучше чтоб был и для inmemory output_model, тогда можно будет пробовать кэшировать(например, складывать output_model от
+        inmemory_computer в dict по имени output_model["name"]
+    :param model:
+    :return:
+    """
+    if verbose >= 3:
+        print("compute_model", model)
+    stop_recompute_if_not_force(model, force, verbose)
+
+    if verbose >= 1:
+        print("model computation start: {}".format(model["name"]))
+
+    start_datetime = datetime.now()
+
+    outputs = compute_outputs(model)
+
+    save_outputs(outputs, model)
 
     datetime_delta = datetime.now() - start_datetime
     if verbose >= 1:
         print("model computed: {} in {} seconds".format(model["name"], datetime_delta.total_seconds()))
 
-    if "output_model" in model:
-        if model["output_model"]["type"] == "ds":
-            if isinstance(input_, np.ndarray):
-                if "chunk_size" in model:
-                    outputs = np.concatenate(outputs)
-            elif isinstance(input_, collections.Iterable):
-                outputs = [output_ for output_ in outputs]
-                outputs = np.array(outputs, copy=False)
-            ds_utils.save_array(outputs, model["output_model"], attrs={"model": model})
-        elif model["output_model"]["type"] == "inmemory":
-            return outputs
-
-
-#
+    return outputs
 
 def compute_models(model_list, force=False, verbose=1):
     for model in model_list:

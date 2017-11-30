@@ -1,5 +1,5 @@
 import io
-
+import openslide
 import numpy as np
 from PIL import Image
 
@@ -15,7 +15,33 @@ from PIL import Image
 #            	    print(box)
 #                a = img.crop(box)
 #                yield a
+from computer import Computer
 from factory_utils import factorify_as_computer
+
+
+def generate_tiles_rects(tile_shape, tile_step, img_shape):
+    tiles_rects = []
+    x = 0
+    y = 0
+    img_size_x = img_shape[0]
+    img_size_y = img_shape[1]
+    x_size = tile_shape[0]
+    y_size = tile_shape[1]
+    x_step = tile_step[0]
+    y_step = tile_step[1]
+    while y < img_size_y:
+        while x < img_size_x:
+            w = x_size
+            if x + w >= img_size_x:
+                w = img_size_x - x
+            h = y_size
+            if y + h >= img_size_y:
+                h = img_size_y - y
+            tiles_rects.append((x, y, w, h))
+            x += x_step
+        x = 0
+        y += y_step
+    return tiles_rects
 
 
 def tiles(pilimg, height, width, print_boxes=False):
@@ -93,7 +119,23 @@ def jpeg_to_matrix(jpeg_):
     return pilimage_to_matrix(jpeg_to_pilimg(jpeg_))
 
 
+def tiles_rects_computer_factory(computer_func_params):
+    tile_shape = computer_func_params["tile_shape"]
+    tile_step = computer_func_params["tile_step"]
+    downsample = computer_func_params["downsample"]
+
+    def computer_(image_path):
+        img = openslide.OpenSlide(image_path)
+        level = img.get_best_level_for_downsample(downsample)
+        img_shape = img.level_dimensions[level]
+        tiles_rects = generate_tiles_rects(tile_shape, tile_step, img_shape)
+        return tiles_rects
+
+    return Computer(computer_, None)
+
+
 image_transform_type__computer_factory = {
     "jpeg_to_matrix": factorify_as_computer(jpeg_to_matrix),
-    "pilimage_to_matrix": factorify_as_computer(pilimage_to_matrix)
+    "pilimage_to_matrix": factorify_as_computer(pilimage_to_matrix),
+    "tiles_rects": tiles_rects_computer_factory
 }
