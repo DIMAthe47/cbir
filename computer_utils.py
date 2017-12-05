@@ -48,13 +48,15 @@ def read_input_model(input_model, verbose=1):
         inputs = input_model["string"]
     # elif input_model["type"] == "slide_image":
     #     inputs = OpenSlide(input_model["image_path"])
+    elif input_model["type"] == "list":
+        inputs = input_model["list"]
     elif input_model["type"] == "inmemory":
         inputs = compute_model(input_model, force=True, verbose=0)
     elif input_model["type"] == "computer":
         if input_model["output_model"]["type"] == "inmemory":
             inputs = compute_model(input_model, force=True, verbose=0)
         else:
-            inputs = compute_model(input_model["output_model"], force=False)
+            inputs = compute_model(input_model,force=True, verbose=0)
     return inputs
 
 
@@ -91,49 +93,48 @@ def compute_outputs(model, verbose=1):
     if "input_model" in model:
         input_ = read_input_model(model["input_model"], verbose)
 
-    if isinstance(input_, np.ndarray):
-        # if hasattr(input_, "__len__"):
-        n_inputs = len(input_)
-        shape = computer.get_shape()
-        if shape:
-            outputs = np.empty((n_inputs, *shape), model["dtype"])
-        else:
-            outputs = [0] * n_inputs
-        # else:
-        #     outputs = []
+        if isinstance(input_, np.ndarray):
+            # if hasattr(input_, "__len__"):
+            n_inputs = len(input_)
+            shape = computer.get_shape()
+            if shape:
+                outputs = np.empty((n_inputs, *shape), model["dtype"])
+            else:
+                outputs = [0] * n_inputs
+            # else:
+            #     outputs = []
 
-        if "chunk_size" in model:
-            chunk_from = 0
-            chunk_to = model["chunk_size"]
-            if chunk_to == -1:
-                chunk_to = n_inputs
-            while chunk_from < n_inputs:
-                if chunk_to >= n_inputs:
+            if "chunk_size" in model:
+                chunk_from = 0
+                chunk_to = model["chunk_size"]
+                if chunk_to == -1:
                     chunk_to = n_inputs
-                outputs[chunk_from:chunk_to] = computer.compute(input_[chunk_from:chunk_to])
-                chunk_from = chunk_to
-                chunk_to += model["chunk_size"]
-        else:
-            for i, source_ in enumerate(input_):
-                outputs[i] = computer.compute(source_)
-                # if not shape:
-                #     outputs = np.array(outputs)
-    elif isinstance(input_, str):
-        outputs = computer.compute(input_)
-    elif isinstance(input_, collections.Iterable):
-        # outputs = []
-        # if "chunk_size" in model:
-        #     input_chunks_iter = chunkify(input_, chunk_size=model["chunk_size"])
-        #     for inputs_chunk in input_chunks_iter:
-        #         output_chunks = computer.compute(inputs_chunk)
-        #         outputs.append(output_chunks)
-        # else:
-        #     for source_ in input_:
-        #         output_ = computer.compute(source_)
-        #         outputs.append(output_)
-        outputs = map(computer.compute, input_)
-    elif input_:
-        outputs = computer.compute(input_)
+                while chunk_from < n_inputs:
+                    if chunk_to >= n_inputs:
+                        chunk_to = n_inputs
+                    outputs[chunk_from:chunk_to] = computer.compute(input_[chunk_from:chunk_to])
+                    chunk_from = chunk_to
+                    chunk_to += model["chunk_size"]
+            else:
+                for i, source_ in enumerate(input_):
+                    outputs[i] = computer.compute(source_)
+                    # if not shape:
+                    #     outputs = np.array(outputs)
+        elif isinstance(input_, str):
+            outputs = computer.compute(input_)
+        elif isinstance(input_, collections.Iterable):
+            if "chunk_size" in model:
+                outputs = []
+                input_chunks_iter = chunkify(input_, chunk_size=model["chunk_size"])
+                # print(next(input_chunks_iter))
+                for inputs_chunk in input_chunks_iter:
+                    output_chunks = computer.compute(inputs_chunk)
+                    outputs.append(output_chunks)
+            else:
+                outputs = map(computer.compute, input_)
+
+        elif input_:
+            outputs = computer.compute(input_)
     else:
         outputs = computer.compute()
     return outputs
@@ -146,6 +147,8 @@ def save_outputs(outputs, model):
             pass
         elif isinstance(outputs, collections.Iterable):
             if "chunk_size" in model:
+                print(outputs)
+                # print(next(outputs))
                 outputs = np.concatenate(outputs)
             elif isinstance(outputs, list):
                 outputs = np.array(outputs, copy=False)
@@ -172,7 +175,8 @@ def compute_model(model, force=False, verbose=1):
     stop_recompute_if_not_force(model, force, verbose)
 
     if verbose >= 1:
-        print("model computation start: {}".format(model["name"]))
+        if "name" in model:
+            print("model computation start: {}".format(model["name"]))
 
     start_datetime = datetime.now()
 
@@ -185,6 +189,7 @@ def compute_model(model, force=False, verbose=1):
         print("model computed: {} in {} seconds".format(model["name"], datetime_delta.total_seconds()))
 
     return outputs
+
 
 def compute_models(model_list, force=False, verbose=1):
     for model in model_list:

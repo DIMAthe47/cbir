@@ -4,14 +4,16 @@ from ds_utils import add_output_model
 import ds_utils
 
 
-def generate_tiles_rects_model(input_model, downsample, tile_shape, tile_step, db_path=None, ds_name=None, dtype="int",
+def generate_tiles_rects_model(image_path, downsample, tile_shape, tile_step, db_path=None, ds_name=None,
+                               dtype="int",
                                **kwargs):
-    name_ = "tiles_rects_{}_{}_{}_{}_{}__{}".format(downsample, *tile_shape, *tile_step, input_model["name"])
+    name_ = "tiles_rects_{}_{}_{}_{}_{}__{}".format(downsample, *tile_shape, *tile_step, image_path)
     model = {
         "type": "computer",
         "name": name_,
         "computer_func_name": "tiles_rects",
         "computer_func_params": {
+            "image_path": image_path,
             "downsample": downsample,
             "tile_shape": tile_shape,
             "tile_step": tile_step,
@@ -21,7 +23,7 @@ def generate_tiles_rects_model(input_model, downsample, tile_shape, tile_step, d
         },
         "dtype": dtype,
         # image_model
-        "input_model": input_model,
+        # "input_model": input_model,
     }
     add_output_model(model, db_path, ds_name)
     return model

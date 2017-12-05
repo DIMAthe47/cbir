@@ -55,7 +55,10 @@ def vgg16_computer_factory(computer_func_params):
     layer_name = computer_func_params["layer_name"]
 
     def computer_(img_matrix_chunks):
+        # return None
         kwargs = computer_func_params["library_func_kwargs"]
+        if img_matrix_chunks.shape[1] != 224 or img_matrix_chunks.shape[2] != 224:
+            return np.zeros((len(img_matrix_chunks), 4096), dtype=float)
         activations = keras_utils.get_activations(vgg16_model, img_matrix_chunks, layer_name=layer_name, **kwargs)
         return activations[0]
 

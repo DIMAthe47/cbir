@@ -1,6 +1,7 @@
 from model_generators.descriptor_model_generators import generate_histogram_model, generate_vgg16_model, \
     generate_pqcode_model, generate_normalization_model
-from model_generators.image_transform_model_generators import generate_jpeg_to_matrix_model
+from model_generators.image_transform_model_generators import generate_jpeg_to_matrix_model, \
+    generate_rgbapilimage_to_rgbpilimage_model
 from model_generators.image_transform_model_generators import generate_pilimage_to_matrix_model
 from model_generators.quantization_model_generators import generate_pq_model
 from model_generators.distance_matrix_model_generators import generate_distance_matrix_model
@@ -12,3 +13,4 @@ from model_generators.score_model_generators import generate_KNeighbors_accuracy
 from model_generators.tiling_model_generators import generate_tiling_model, generate_tiles_rects_model, \
     generate_tiling_model2
 from model_generators.image_model_generators import generate_image_model
+

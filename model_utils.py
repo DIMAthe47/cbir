@@ -22,3 +22,20 @@ def find_quantization_model(model):
         return find_quantization_model(model["computer_func_params"]["base_model"])
     else:
         raise ValueError("cant find quantization_model for {}".format(model["name"]))
+
+
+def find_image_path(model):
+    if model["type"] == "computer":
+        if "computer_func_params" in model and "image_path" in model["computer_func_params"]:
+            return model["computer_func_params"]["image_path"]
+        elif "input_model" in model:
+            return find_image_path(model["input_model"])
+    raise ValueError("cant find image_path for {}".format(model["name"]))
+
+def find_tiles_rects_model(model):
+    if model["type"] == "computer":
+        if "computer_func_name" in model and  model["computer_func_name"]=="tiles_rects":
+            return model
+        elif "input_model" in model:
+            return find_tiles_rects_model(model["input_model"])
+    raise ValueError("cant find tiles_rects_model for {}".format(model["name"]))

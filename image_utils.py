@@ -76,6 +76,24 @@ def tiles(pilimg, height, width, print_boxes=False):
 #    img_arr = img_arr.reshape((img.size[1], img.size[0], len(img.getbands())))
 #    return img_arr
 
+def pure_pil_alpha_to_color_v2(pilimg, color=(255, 255, 255)):
+    """Alpha composite an RGBA Image with a specified color.
+
+    Simpler, faster version than the solutions above.
+
+    Source: http://stackoverflow.com/a/9459208/284318
+
+    Keyword Arguments:
+    image -- PIL RGBA Image object
+    color -- Tuple r, g, b (default 255, 255, 255)
+
+    """
+    pilimg.load()  # needed for split()
+    background = Image.new('RGB', pilimg.size, color)
+    background.paste(pilimg, mask=pilimg.split()[3])  # 3 is the alpha channel
+    return background
+
+
 def img_matrix_to_gray_img_matrix(img_matrix):
     pilimg_gray = img_matrix_to_pil_image(img_matrix, grayscale=True)
     img_gray_matrix = pilimage_to_matrix(pilimg_gray)
@@ -123,8 +141,10 @@ def tiles_rects_computer_factory(computer_func_params):
     tile_shape = computer_func_params["tile_shape"]
     tile_step = computer_func_params["tile_step"]
     downsample = computer_func_params["downsample"]
+    image_path = computer_func_params["image_path"]
 
-    def computer_(image_path):
+    # def computer_(image_path):
+    def computer_():
         img = openslide.OpenSlide(image_path)
         level = img.get_best_level_for_downsample(downsample)
         img_shape = img.level_dimensions[level]
@@ -137,5 +157,6 @@ def tiles_rects_computer_factory(computer_func_params):
 image_transform_type__computer_factory = {
     "jpeg_to_matrix": factorify_as_computer(jpeg_to_matrix),
     "pilimage_to_matrix": factorify_as_computer(pilimage_to_matrix),
-    "tiles_rects": tiles_rects_computer_factory
+    "tiles_rects": tiles_rects_computer_factory,
+    "rgbapilimage_to_rgbpilimage": factorify_as_computer(pure_pil_alpha_to_color_v2)
 }

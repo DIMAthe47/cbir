@@ -40,7 +40,7 @@ def generate_lbp_model(input_model, P, R, method, db_path=None, ds_name=None, dt
     return model
 
 
-def generate_vgg16_model(input_model, layer_name, db_path=None, ds_name=None, dtype="float"):
+def generate_vgg16_model(input_model, layer_name, chunk_size=30, db_path=None, ds_name=None, dtype="float"):
     name_ = "vgg16_{}".format(layer_name)
     model = {
         "type": "computer",
@@ -52,7 +52,7 @@ def generate_vgg16_model(input_model, layer_name, db_path=None, ds_name=None, dt
         },
         "dtype": dtype,
         "input_model": input_model,
-        "chunk_size": 30
+        "chunk_size": chunk_size
     }
     add_output_model(model, db_path, ds_name)
     return model
