@@ -130,7 +130,9 @@ def compute_outputs(model, verbose=1):
                 # print(next(input_chunks_iter))
                 for inputs_chunk in input_chunks_iter:
                     output_chunks = computer.compute(inputs_chunk)
-                    outputs.append(output_chunks)
+                    # outputs.append(output_chunks)
+                    for output in output_chunks:
+                        outputs.append(output)
             else:
                 outputs = map(computer.compute, input_)
 

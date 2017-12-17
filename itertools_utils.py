@@ -6,11 +6,13 @@ import numpy as np
 
 def chunkify(it, chunk_size, numpy_array_chunks=True):
     if chunk_size == -1:
-        it_list = list(it)
-        if len(it_list) == 1 and len(it_list[0].shape) == 1:
-            chunks_stream = [it_list]
-        else:
-            chunks_stream = it_list
+        chunk = tuple(it)
+        chunks_stream = [chunk]
+        # it_list = list(it)
+        # if len(it_list) == 1 and len(it_list[0].shape) == 1:
+        #     chunks_stream = [it_list]
+        # else:
+        #     chunks_stream = it_list
     else:
         tw = itertools.takewhile
         count = itertools.count
