@@ -37,13 +37,33 @@ def lbp_computer_factory(computer_func_params):
     return Computer(computer_, None)
 
 
+from sklearn.metrics import pairwise_distances
+
+first_hist = None
+first_img = None
+
+
 def gray_histogram_computer_factory(computer_func_params):
     n_bins = computer_func_params["n_bins"]
+    density = computer_func_params["density"]
 
     def computer_(img_matrix):
         img_gray_matrix = iu.img_matrix_to_gray_img_matrix(img_matrix)
+        # iu.img_matrix_to_pil_image(img_gray_matrix).show()
         kwargs = computer_func_params["library_func_kwargs"]
-        histogram = np.histogram(img_gray_matrix, bins=n_bins, **kwargs)[0]
+        n_values = 256
+        bin_size = n_values // n_bins
+        edges = [i * bin_size + min((bin_size, n_values - 1 - i * bin_size)) for i in range(n_bins)]
+        edges = [0] + edges
+        histogram, edges_ = np.histogram(img_gray_matrix, bins=edges, density=density, **kwargs)
+
+        if first_hist is None:
+            first_img = iu.img_matrix_to_pil_image(img_gray_matrix)
+            # first_img.show()
+        else:
+            dist = pairwise_distances(first_hist.reshape(1, -1), histogram.reshape(1, -1))
+            # iu.img_matrix_to_pil_image(img_gray_matrix).show()
+            print(dist)
         return histogram
 
     shape = [n_bins]

@@ -3,7 +3,7 @@ import numpy as np
 from ds_utils import add_output_model
 
 
-def generate_histogram_model(input_model, n_bins, db_path=None, ds_name=None, dtype="float"):
+def generate_histogram_model(input_model, n_bins, density=True, db_path=None, ds_name=None, dtype="float"):
     name_ = "histogram_{}".format(n_bins)
     model = {
         "type": "computer",
@@ -11,6 +11,7 @@ def generate_histogram_model(input_model, n_bins, db_path=None, ds_name=None, dt
         "computer_func_name": "histogram",
         "computer_func_params": {
             "n_bins": n_bins,
+            "density": density,
             "library_func_kwargs": {}
         },
         "dtype": dtype,

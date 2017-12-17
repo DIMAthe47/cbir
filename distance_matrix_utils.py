@@ -1,3 +1,5 @@
+import computer_utils
+import np_utils
 import numpy as np
 import sys
 from sklearn.preprocessing import normalize
@@ -83,8 +85,15 @@ def unoptimzed_asymmetric_distance(query_descriptor, db_pqcode, **kwargs):
 
 
 def l2_distance_matrix_computer_factory(computer_func_params):
-    X_ds = computer_func_params["base_model"]["output_model"]
-    X = ds_utils.read_array(X_ds)
+    # X_ds = computer_func_params["base_model"]["output_model"]
+    # X = ds_utils.read_array(X_ds)
+    X = computer_utils.compute_model(computer_func_params["base_model"])
+
+    # TODO consider all cases
+    if isinstance(X, np.ndarray):
+        pass
+    elif isinstance(X, np.collections.Iterable):
+        X = list(X)
 
     def computer_(Q):
         Q = Q.reshape((len(Q), -1))

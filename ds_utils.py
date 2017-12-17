@@ -1,4 +1,5 @@
 import itertools
+
 import numpy as np
 import image_utils
 from contextlib import ExitStack
@@ -6,6 +7,25 @@ import contextlib
 import h5py
 import json
 import file_utils
+
+from functools import singledispatch
+
+from PIL import Image
+
+
+@singledispatch
+def to_json(val):
+    """Used by default."""
+    return json.dumps(val, indent=4)
+
+
+@to_json.register(Image.Image)
+def pilimg_to_json(val):
+    """Used if *val* is an instance of PIL.Image."""
+    return "TODO"
+
+img = Image.open('/home/dimathe47/data/geo_tiny/Segm_RemoteSensing1/cropped/poligon_minsk_1_yandex_z18_train_0_0.jpg')
+print(json.dumps(img, default=to_json))
 
 
 class DSNotFoundError(Exception):
@@ -72,7 +92,7 @@ def save_array(arr, db_path_or_source, ds_name=None, attrs=None):
         for attr in attrs or []:
             # print(attr, attrs[attr])
             if not isinstance(attrs[attr], np.ndarray):
-                ds.attrs[attr] = json.dumps(attrs[attr], indent=4)
+                ds.attrs[attr] = json.dumps(attrs[attr], indent=4, default=to_json)
             else:
                 ds.attrs[attr] = attrs[attr]
         ds.attrs["shape"] = [int(x) for x in arr.shape]

@@ -1,4 +1,5 @@
 import openslide
+import rect_utils
 
 from computer import Computer
 
@@ -48,7 +49,7 @@ def openslide_tiles_generator_factory(computer_func_params):
 def openslide_tiles_generator2_factory(computer_func_params):
     # tiles_rects = computer_func_params["tiles_rects"]
     downsample = computer_func_params["downsample"]
-    image_path = computer_func_params["image_path"]
+    image_path = computer_func_params["image_model"]["string"]
     slide = openslide.OpenSlide(image_path)
     level = slide.get_best_level_for_downsample(downsample)
 
@@ -59,7 +60,21 @@ def openslide_tiles_generator2_factory(computer_func_params):
     return Computer(computer_)
 
 
+def rect_tiles_generator_factory(computer_func_params):
+    rect_size = computer_func_params["rect_size"]
+    tile_size = computer_func_params["tile_size"]
+    tile_step = computer_func_params["tile_step"]
+
+    def computer_():
+        tile_generator = rect_utils.gen_slice_rect(rect_size, tile_size, tile_step)
+        return tile_generator
+
+    return Computer(computer_)
+
+
 image_util_type__computer_factory = {
     "openslide_tiler": openslide_tiles_generator_factory,
-    "openslide_tiler2": openslide_tiles_generator2_factory
+    "openslide_tiler2": openslide_tiles_generator2_factory,
+    "rect_tiles": rect_tiles_generator_factory,
+    "tile": openslide_tiles_generator2_factory
 }

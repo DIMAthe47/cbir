@@ -56,7 +56,7 @@ def read_input_model(input_model, verbose=1):
         if input_model["output_model"]["type"] == "inmemory":
             inputs = compute_model(input_model, force=True, verbose=0)
         else:
-            inputs = compute_model(input_model,force=True, verbose=0)
+            inputs = compute_model(input_model, force=True, verbose=0)
     return inputs
 
 
@@ -67,9 +67,10 @@ def stop_recompute_if_not_force(model, force=False, verbose=1):
             if "shape" in attrs:
                 if verbose >= 1:
                     print("model computation skipped (force=False): {} ".format(model["name"]))
-                return
+                return True
         except (ds_utils.DSNotFoundError, OSError):
             pass
+    return False
 
 
 # def compute_for_input_as_ndarray(model):
@@ -160,6 +161,7 @@ def save_outputs(outputs, model):
         ds_utils.save_array(outputs, output_model, attrs={"model": model})
     elif output_model["type"] == "inmemory":
         pass
+    return outputs
 
 
 def compute_model(model, force=False, verbose=1):
@@ -172,7 +174,10 @@ def compute_model(model, force=False, verbose=1):
     """
     if verbose >= 3:
         print("compute_model", model)
-    stop_recompute_if_not_force(model, force, verbose)
+    stop_ = stop_recompute_if_not_force(model, force, verbose)
+    if stop_:
+        outputs = read_input_model(model["output_model"])
+        return outputs
 
     if verbose >= 1:
         if "name" in model:
@@ -182,7 +187,7 @@ def compute_model(model, force=False, verbose=1):
 
     outputs = compute_outputs(model)
 
-    save_outputs(outputs, model)
+    outputs = save_outputs(outputs, model)
 
     datetime_delta = datetime.now() - start_datetime
     if verbose >= 1:
