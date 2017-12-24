@@ -6,7 +6,6 @@ from skimage.feature import greycomatrix, local_binary_pattern
 import image_utils as iu
 import sys
 
-sys.path.append('/home/dimathe47/PycharmProjects/pq')
 from core.quantization.pq_quantizer import PQQuantizer, restore_from_clusters
 import ds_utils
 from computer import Computer
