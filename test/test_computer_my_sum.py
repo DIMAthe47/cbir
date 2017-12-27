@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-import computer_utils
+from cbir_core.computer import computer_utils
 
 
 def data_comes_from_some_place_other_than_output_of_another_model():
@@ -14,7 +14,7 @@ def my_sum(arr):
 class MySumTest(unittest.TestCase):
     def test_compute(self):
         computer_utils.add_factory("data_comes_from_some_place_other_than_output_of_another_model",
-                             data_comes_from_some_place_other_than_output_of_another_model, False)
+                                   data_comes_from_some_place_other_than_output_of_another_model, False)
         computer_utils.add_factory("my_sum", my_sum, False)
 
         model = {

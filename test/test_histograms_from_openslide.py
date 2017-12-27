@@ -1,9 +1,6 @@
 import unittest
-from itertools import count
 
-import numpy as np
-from classificatiton_utils import knn_compute_classes
-from computer_utils import compute_model
+from cbir_core.computer.computer_utils import compute_model
 from model_generators import generate_histogram_model, generate_image_model
 from model_generators.image_transform_model_generators import generate_pilimage_to_matrix_model
 from model_generators.tiling_model_generators import generate_tiling_model

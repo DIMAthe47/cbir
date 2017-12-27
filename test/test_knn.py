@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from classificatiton_utils import knn_compute_classes
+from cbir_core.util.classificatiton_utils import knn_compute_classes
 
 
 class KnnTest(unittest.TestCase):

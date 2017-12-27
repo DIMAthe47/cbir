@@ -1,33 +1,33 @@
-import types
 from datetime import datetime
 
 import numpy as np
 import collections
 
-import ds_utils
-from classificatiton_utils import classification_type__computer_factory
-from descriptor_utils import descriptor_type__computer_factory
-from distance_matrix_utils import type__distance_matrix_computer_factory
-from factory_utils import factorify_as_computer
-from image_utils import image_transform_type__computer_factory
+from cbir_core.factory.descriptor_utils_factories import descriptor_util__computer_factory
+from cbir_core.util import ds_utils
+from cbir_core.factory.factory_utils import factorify_as_computer
+from cbir_core.factory.classification_utils_factories import classification_type__computer_factory
+from cbir_core.factory.distance_matrix_utils_factories import type__distance_matrix_computer_factory
+from cbir_core.factory.image_utils_factories import image_transform_type__computer_factory
+from cbir_core.factory.openslide_utils_factories import openslide_util__computer_factory
+from cbir_core.factory.tiling_utils_factories import tiling_util__computer_factory
 from itertools_utils import chunkify
-from nearest_indices_utils import nearest_indices_type__computer_factory
-from np_utils import iterable_to_array
-from plot_utils import plot_type__factory
-from quantization_utils import quantization_type__computer_factory
-from score_utils import score_type__computer_factory
-from slide_utils import image_util_type__computer_factory
+from cbir_core.factory.nearest_indices_utils_factories import nearest_indices_type__computer_factory
+from cbir_core.util.plot_utils import plot_type__factory
+from cbir_core.factory.quantization_utils_factories import quantization_type__computer_factory
+from cbir_core.util.score_utils import score_type__computer_factory
 
 type__computer_factory = {
     **image_transform_type__computer_factory,
-    **descriptor_type__computer_factory,
+    **descriptor_util__computer_factory,
     **quantization_type__computer_factory,
     **type__distance_matrix_computer_factory,
     **nearest_indices_type__computer_factory,
     **classification_type__computer_factory,
     **score_type__computer_factory,
     **plot_type__factory,
-    **image_util_type__computer_factory
+    **tiling_util__computer_factory,
+    **openslide_util__computer_factory
 }
 
 

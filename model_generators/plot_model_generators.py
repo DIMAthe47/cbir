@@ -1,7 +1,4 @@
-import sys, json
-import numpy as np
-from ds_utils import add_output_model
-import ds_utils
+from cbir_core.util import ds_utils
 
 
 def generate_accuracy_plot_model(accuracy_model_list, group_type, figure_list_filter=None, title="", n_nearest=None,

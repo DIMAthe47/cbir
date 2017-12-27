@@ -1,6 +1,4 @@
-import sys, json
-import numpy as np
-from ds_utils import add_output_model
+from model_generators.ds_model_generators import add_output_model
 
 
 def generate_nearest_indices_model(input_model, n_nearest=-1, db_path=None, ds_name=None, dtype="float", **kwargs):

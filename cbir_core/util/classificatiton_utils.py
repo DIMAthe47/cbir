@@ -1,9 +1,4 @@
 import numpy as np
-import sys
-
-import ds_utils
-from datetime import datetime
-from computer import Computer
 
 
 def knn_compute_classes(nearest_indices, classes):
@@ -21,20 +16,3 @@ def knn_compute_classes(nearest_indices, classes):
             # print("occurences", occurences)
             queries_classes[n_query][n_nearest_] = occurences.argmax()
     return queries_classes
-
-
-def knn_class_computer_factory(computer_func_params):
-    # print(computer_func_params)
-    true_classes_model = computer_func_params["true_classes_model"]
-    # compute_model(true_classes_model), а сейчас предполагаем, что это обязательно ds
-    true_classes = ds_utils.read_array(true_classes_model)
-
-    def computer_(nearest_indices):
-        return knn_compute_classes(nearest_indices, true_classes)
-
-    return Computer(computer_)
-
-
-classification_type__computer_factory = {
-    "knn": knn_class_computer_factory
-}

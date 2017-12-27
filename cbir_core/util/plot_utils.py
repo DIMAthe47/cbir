@@ -1,9 +1,4 @@
-import numpy as np
-import sys
-
-import ds_utils
-from datetime import datetime
-from computer import Computer
+from cbir_core.computer.computer import Computer
 from file_utils import make_if_not_exists
 import itertools
 

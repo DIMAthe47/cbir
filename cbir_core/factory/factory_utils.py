@@ -1,4 +1,4 @@
-from computer import Computer
+from cbir_core.computer.computer import Computer
 
 
 def factorify_as_computer(func):

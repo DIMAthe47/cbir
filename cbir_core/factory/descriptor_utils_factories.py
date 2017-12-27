@@ -1,15 +1,11 @@
 import numpy as np
-import image_utils as iu
-from keras.applications import VGG16
-import keras_utils
+from core.quantization.pq_quantizer import restore_from_clusters
 from skimage.feature import greycomatrix, local_binary_pattern
-import image_utils as iu
-import sys
-
-from core.quantization.pq_quantizer import PQQuantizer, restore_from_clusters
-import ds_utils
-from computer import Computer
 from sklearn.preprocessing import normalize
+
+import image_form_utils as iu
+from cbir_core.util import keras_utils, ds_utils
+from cbir_core.computer.computer import Computer
 
 
 def glcm_computer_factory(computer_func_params):
@@ -34,12 +30,6 @@ def lbp_computer_factory(computer_func_params):
         return lbp
 
     return Computer(computer_, None)
-
-
-from sklearn.metrics import pairwise_distances
-
-first_hist = None
-first_img = None
 
 
 def gray_histogram_computer_factory(computer_func_params):
@@ -70,6 +60,7 @@ def gray_histogram_computer_factory(computer_func_params):
     return Computer(computer_, shape)
 
 
+"""
 def vgg16_computer_factory(computer_func_params):
     vgg16_model = VGG16()
     layer_name = computer_func_params["layer_name"]
@@ -87,7 +78,7 @@ def vgg16_computer_factory(computer_func_params):
     elif layer_name == "fc2":
         shape = [4096]
     return Computer(computer_, shape)
-
+"""
 
 def pqcode_computer_factory(computer_func_params):
     cluster_centers_ds = computer_func_params["quantization_model"]["output_model"]
@@ -113,43 +104,12 @@ def normalize_factory(computer_func_params):
     return Computer(computer_, None)
 
 
-descriptor_type__computer_factory = {
+descriptor_util__computer_factory = {
     "pq": pqcode_computer_factory,
     "glcm": glcm_computer_factory,
     "histogram": gray_histogram_computer_factory,
     "lbp": lbp_computer_factory,
-    "vgg16": vgg16_computer_factory,
+    # "vgg16": vgg16_computer_factory,
     "pqcode": pqcode_computer_factory,
     "normalize": normalize_factory
 }
-
-
-# will be better not to pass here model
-# sources can be read from model["input_ds"]
-def compute_descriptors(model, sources_):
-    computer_factory = descriptor_type__computer_factory[model["type"]]
-    computer = computer_factory(model["kwargs"])
-    n_sources_ = len(sources_)
-    shape = computer.get_shape()
-    if shape:
-        desciptors = np.empty((n_sources_, *shape), model["dtype"])
-    else:
-        desciptors = [0] * n_sources_
-
-    if "chunk_size" in model:
-        chunk_from = 0
-        chunk_to = model["chunk_size"]
-        while chunk_from < n_sources_:
-            if chunk_to >= n_sources_:
-                chunk_to = n_sources_
-            desciptors[chunk_from:chunk_to] = computer.compute(sources_[chunk_from:chunk_to])
-            chunk_from = chunk_to
-            chunk_to += model["chunk_size"]
-    else:
-        for i, source_ in enumerate(sources_):
-            desciptors[i] = computer.compute(source_)
-
-    if not shape:
-        desciptors = np.array(desciptors)
-
-    return desciptors

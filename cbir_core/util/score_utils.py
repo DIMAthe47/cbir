@@ -1,13 +1,10 @@
 import numpy as np
-import sys
 
 from sklearn.neighbors import KNeighborsClassifier
 
-import ds_utils
-from datetime import datetime
-from sklearn.metrics import accuracy_score, precision_score, recall_score, pairwise_distances
-from computer import Computer
-from distance_matrix_utils import asymmetric_distance, unoptimzed_asymmetric_distance
+from cbir_core.util import ds_utils
+from sklearn.metrics import accuracy_score
+from cbir_core.computer.computer import Computer
 
 
 def accuracy_score_computer_factory(computer_func_params):

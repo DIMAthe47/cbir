@@ -1,7 +1,4 @@
-import sys, json
-import numpy as np
-from ds_utils import add_output_model
-import ds_utils
+from model_generators.ds_model_generators import add_output_model
 
 
 def generate_rect_tiles_model(rect_size, tile_size, tile_step, db_path=None, ds_name=None,

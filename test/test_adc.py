@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from distance_matrix_utils import asymmetric_distance
+from cbir_core.util.distance_matrix_utils import asymmetric_distance
 
 
 class ADCTest(unittest.TestCase):
