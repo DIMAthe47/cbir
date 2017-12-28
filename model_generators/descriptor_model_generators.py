@@ -1,7 +1,7 @@
 from model_generators.ds_model_generators import add_output_model
 
 
-def generate_histogram_model(input_model, n_bins, density=True, db_path=None, ds_name=None, dtype="float"):
+def generate_histogram_model(input_model, n_bins, density, db_path=None, ds_name=None, dtype="float"):
     name_ = "histogram_{}".format(n_bins)
     model = {
         "type": "computer",

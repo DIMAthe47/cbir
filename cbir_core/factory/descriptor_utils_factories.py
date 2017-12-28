@@ -4,7 +4,8 @@ from skimage.feature import greycomatrix, local_binary_pattern
 from sklearn.preprocessing import normalize
 
 import image_form_utils as iu
-from cbir_core.util import keras_utils, ds_utils
+# from cbir_core.util import keras_utils
+from cbir_core.util import ds_utils
 from cbir_core.computer.computer import Computer
 
 

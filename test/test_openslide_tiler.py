@@ -1,7 +1,7 @@
 import unittest
 
 from cbir_core.computer.computer_utils import compute_model
-from model_generators.tiling_model_generators import generate_tiling_model2
+from model_generators.tiling_model_generators import generate_tiling_model
 
 
 class OpensliderTest(unittest.TestCase):
@@ -24,7 +24,7 @@ class OpensliderTest(unittest.TestCase):
                      ],
             "name": "rects"
         }
-        tiling_model = generate_tiling_model2(rects_model, openslide_image_model, 1)
+        tiling_model = generate_tiling_model(rects_model, openslide_image_model, 1)
         output_ = compute_model(tiling_model)
         # k = sum(1 for _ in output_)
         # print(output_, k)
