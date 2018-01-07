@@ -52,7 +52,7 @@ def generate_tiles_rects_model(image_path, downsample, tile_shape, tile_step, db
 
 def generate_tiling_model(input_model, image_model, downsample, db_path=None, ds_name=None, dtype="int",
                           **kwargs):
-    name_ = "tile__{}".format(input_model["name"])
+    name_ = "openslide_tiler__{}".format(input_model["name"])
     model = {
         "type": "computer",
         "name": name_,
