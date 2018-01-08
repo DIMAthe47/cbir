@@ -94,8 +94,17 @@ def generate_normalization_model(input_model, norm="l2", db_path=None, ds_name=N
     return model
 
 
-if __name__ == '__main__':
-    model = generate_histogram_model("in", 128, "out")
-    print(model)
-    model = generate_vgg16_model("in", "fc1", "out")
-    print(model)
+descriptor_type__model_generator = {
+    "histogram": generate_histogram_model,
+    "lbp": generate_lbp_model,
+    "vgg16": generate_vgg16_model
+}
+
+
+def generate_models_array(input_model, descriptor_models, db_path=None, ds_name=None):
+    models=[]
+    for descriptor_model in descriptor_models:
+        model_generator = descriptor_type__model_generator[descriptor_model["name"]]
+        model = model_generator(input_model, **descriptor_model["params"], db_path=db_path, ds_name=ds_name)
+        models.append(model)
+    return models

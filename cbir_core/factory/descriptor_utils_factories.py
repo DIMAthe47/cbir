@@ -38,8 +38,8 @@ def gray_histogram_computer_factory(computer_func_params):
     density = computer_func_params["density"]
     n_values = 256
     bin_size = n_values // n_bins
-    edges = [i * bin_size + min((bin_size, n_values - 1 - i * bin_size)) for i in range(n_bins)]
-    edges = [0] + edges
+    # edges = [i * bin_size for i in range(n_bins)]
+    edges = np.arange(0, n_values - 1, bin_size)
 
     def computer_(img_matrix):
         img_gray_matrix = iu.img_matrix_to_gray_img_matrix(img_matrix)
@@ -50,11 +50,11 @@ def gray_histogram_computer_factory(computer_func_params):
 
         # if first_hist is None:
         #     first_img = iu.img_matrix_to_pil_image(img_gray_matrix)
-            # first_img.show()
+        # first_img.show()
         # else:
         #     dist = pairwise_distances(first_hist.reshape(1, -1), histogram.reshape(1, -1))
-            # iu.img_matrix_to_pil_image(img_gray_matrix).show()
-            # print(dist)
+        # iu.img_matrix_to_pil_image(img_gray_matrix).show()
+        # print(dist)
         return histogram
 
     shape = [n_bins]
@@ -80,6 +80,7 @@ def vgg16_computer_factory(computer_func_params):
         shape = [4096]
     return Computer(computer_, shape)
 """
+
 
 def pqcode_computer_factory(computer_func_params):
     cluster_centers_ds = computer_func_params["quantization_model"]["output_model"]
