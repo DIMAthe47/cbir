@@ -69,3 +69,14 @@ def find_pilimage_to_matrix_model(model):
         elif "input_model" in model:
             return find_pilimage_to_matrix_model(model["input_model"]), model
     raise ValueError("cant find pilimage_to_matrix model for {}".format(model["name"]))
+
+
+def find_image_path(model):
+    img_path = find_image_model(model)["string"]
+    return img_path
+
+
+def find_downsample(model):
+    openslide_tiler_model = find_openslide_tiler_model(model)
+    downsample = openslide_tiler_model["computer_func_params"]["downsample"]
+    return downsample
