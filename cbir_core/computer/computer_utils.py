@@ -11,7 +11,7 @@ from cbir_core.factory.distance_matrix_utils_factories import type__distance_mat
 from cbir_core.factory.image_utils_factories import image_transform_type__computer_factory
 from cbir_core.factory.openslide_utils_factories import openslide_util__computer_factory
 from cbir_core.factory.tiling_utils_factories import tiling_util__computer_factory
-from itertools_utils import chunkify
+from itertools_utils import chunkify, tee_print_iterable
 from cbir_core.factory.nearest_indices_utils_factories import nearest_indices_type__computer_factory
 from cbir_core.util.plot_utils import plot_type__factory
 from cbir_core.factory.quantization_utils_factories import quantization_type__computer_factory
@@ -126,13 +126,16 @@ def compute_outputs(model, verbose=1):
         elif isinstance(input_, collections.Iterable):
             if "chunk_size" in model:
                 outputs = []
+                # input_ = tee_print_iterable(input_)
                 input_chunks_iter = chunkify(input_, chunk_size=model["chunk_size"])
+                input_chunks_iter=tee_print_iterable(input_chunks_iter)
                 # print(next(input_chunks_iter))
                 for inputs_chunk in input_chunks_iter:
                     output_chunks = computer.compute(inputs_chunk)
                     # outputs.append(output_chunks)
-                    for output in output_chunks:
-                        outputs.append(output)
+                    outputs.extend(output_chunks)
+                    # for output in output_chunks:
+                    #     outputs.append(output)
             else:
                 outputs = map(computer.compute, input_)
 

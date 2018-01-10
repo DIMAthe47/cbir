@@ -4,7 +4,7 @@ import image_form_utils
 import itertools_utils
 import operator
 
-from cbir_core.factory.keras_utils_factories import activations_factory
+# from cbir_core.factory.keras_utils_factories import activations_factory
 
 
 def get_activations(model, X, layer_name=None, print_shape_only=True):
@@ -40,19 +40,19 @@ def get_activations(model, X, layer_name=None, print_shape_only=True):
     return activations
 
 
-def images_stream_to_activations_arr(model, input_stream, layer_name, chunk_size=20):
+# def images_stream_to_activations_arr(model, input_stream, layer_name, chunk_size=20):
 #input_stream - stream of filepathes | imagebytes | PIL.Image`s
-    images_arr_stream = map(image_form_utils.img_to_numpy_array, input_stream)
+    # images_arr_stream = map(image_form_utils.img_to_numpy_array, input_stream)
 #    images_arr_stream = itertools.islice(images_arr_stream, 5)
 #    print(list(map(np.shape, images_arr_stream)))
-    images_arr_chunks_stream = itertools_utils.chunkify(images_arr_stream, chunk_size)
-    cnn_activations_func = activations_factory(model, layer_name)
-    cnn_activations_chunks_stream = map(np.array, map(cnn_activations_func, images_arr_chunks_stream))
+#     images_arr_chunks_stream = itertools_utils.chunkify(images_arr_stream, chunk_size)
+#     cnn_activations_func = activations_factory(model, layer_name)
+#     cnn_activations_chunks_stream = map(np.array, map(cnn_activations_func, images_arr_chunks_stream))
     #get only one layer
-    cnn_activations_chunks_stream = map(operator.itemgetter(0), cnn_activations_chunks_stream)
+    # cnn_activations_chunks_stream = map(operator.itemgetter(0), cnn_activations_chunks_stream)
 #     for i in cnn_activations_chunks_stream:
 #         print(i.shape)
 #     cnn_activations_chunks_stream=map(np.array,cnn_activations_chunks_stream))
-    activations = list(cnn_activations_chunks_stream)
-    activations_arr = np.concatenate(activations)
-    return activations_arr
+#     activations = list(cnn_activations_chunks_stream)
+#     activations_arr = np.concatenate(activations)
+#     return activations_arr

@@ -1,10 +1,11 @@
 import numpy as np
 from core.quantization.pq_quantizer import restore_from_clusters
+from keras.applications import VGG16
 from skimage.feature import greycomatrix, local_binary_pattern
 from sklearn.preprocessing import normalize
 
 import image_form_utils as iu
-# from cbir_core.util import keras_utils
+from cbir_core.util import keras_utils
 from cbir_core.util import ds_utils
 from cbir_core.computer.computer import Computer
 
@@ -61,7 +62,6 @@ def gray_histogram_computer_factory(computer_func_params):
     return Computer(computer_, shape)
 
 
-"""
 def vgg16_computer_factory(computer_func_params):
     vgg16_model = VGG16()
     layer_name = computer_func_params["layer_name"]
@@ -79,7 +79,6 @@ def vgg16_computer_factory(computer_func_params):
     elif layer_name == "fc2":
         shape = [4096]
     return Computer(computer_, shape)
-"""
 
 
 def pqcode_computer_factory(computer_func_params):
@@ -111,7 +110,7 @@ descriptor_util__computer_factory = {
     "glcm": glcm_computer_factory,
     "histogram": gray_histogram_computer_factory,
     "lbp": lbp_computer_factory,
-    # "vgg16": vgg16_computer_factory,
+    "vgg16": vgg16_computer_factory,
     "pqcode": pqcode_computer_factory,
     "normalize": normalize_factory
 }
