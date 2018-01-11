@@ -126,16 +126,11 @@ def compute_outputs(model, verbose=1):
         elif isinstance(input_, collections.Iterable):
             if "chunk_size" in model:
                 outputs = []
-                # input_ = tee_print_iterable(input_)
                 input_chunks_iter = chunkify(input_, chunk_size=model["chunk_size"])
-                input_chunks_iter=tee_print_iterable(input_chunks_iter)
-                # print(next(input_chunks_iter))
-                for inputs_chunk in input_chunks_iter:
-                    output_chunks = computer.compute(inputs_chunk)
-                    # outputs.append(output_chunks)
-                    outputs.extend(output_chunks)
-                    # for output in output_chunks:
-                    #     outputs.append(output)
+                outputs = map(computer.compute, input_chunks_iter)
+                # for inputs_chunk in input_chunks_iter:
+                #     output_chunks = computer.compute(inputs_chunk)
+                #     outputs.extend(output_chunks)
             else:
                 outputs = map(computer.compute, input_)
 
@@ -153,8 +148,9 @@ def save_outputs(outputs, model):
             pass
         elif isinstance(outputs, collections.Iterable):
             if "chunk_size" in model:
-                print(outputs)
+                # print(outputs)
                 # print(next(outputs))
+                outputs=list(outputs)
                 outputs = np.concatenate(outputs)
             elif isinstance(outputs, list):
                 outputs = np.array(outputs, copy=False)

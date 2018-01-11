@@ -13,6 +13,7 @@ def generate_jpeg_to_matrix_model(input_model, db_path=None, ds_name=None, dtype
     add_output_model(model, db_path, ds_name)
     return model
 
+
 def generate_pilimage_to_matrix_model(input_model, db_path=None, ds_name=None, dtype="float"):
     name_ = "pilimage_to_matrix"
     model = {
@@ -24,6 +25,7 @@ def generate_pilimage_to_matrix_model(input_model, db_path=None, ds_name=None, d
     }
     add_output_model(model, db_path, ds_name)
     return model
+
 
 def generate_rgbapilimage_to_rgbpilimage_model(input_model, db_path=None, ds_name=None, dtype="float"):
     name_ = "rgbapilimage_to_rgbpilimage"
@@ -38,5 +40,17 @@ def generate_rgbapilimage_to_rgbpilimage_model(input_model, db_path=None, ds_nam
     return model
 
 
-if __name__ == '__main__':
-    pass
+def generate_pilimage_to_resizedpilimage_model(input_model, size, db_path=None, ds_name=None, dtype="float"):
+    name_ = "pilimage_to_resizedpilimage"
+    model = {
+        "type": "computer",
+        "name": name_,
+        "computer_func_name": name_,
+        "computer_func_params": {
+            "size": size
+        },
+        "dtype": dtype,
+        "input_model": input_model,
+    }
+    add_output_model(model, db_path, ds_name)
+    return model

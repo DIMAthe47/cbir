@@ -53,12 +53,12 @@ def find_tile_rects_model(model):
     raise ValueError("cant find tile model for {}".format(model["name"]))
 
 
-def find_openslide_tiler_model(model):
+def find_openslide_tiler_model(model, parent_model=None):
     if model["type"] == "computer":
         if "computer_func_name" in model and model["computer_func_name"] == "openslide_tiler":
-            return model
+            return model, parent_model
         elif "input_model" in model:
-            return find_openslide_tiler_model(model["input_model"])
+            return find_openslide_tiler_model(model["input_model"], model)
     raise ValueError("cant find tile model for {}".format(model["name"]))
 
 
@@ -77,6 +77,6 @@ def find_image_path(model):
 
 
 def find_downsample(model):
-    openslide_tiler_model = find_openslide_tiler_model(model)
+    openslide_tiler_model, parent_model = find_openslide_tiler_model(model)
     downsample = openslide_tiler_model["computer_func_params"]["downsample"]
     return downsample

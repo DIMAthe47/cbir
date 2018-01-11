@@ -1,3 +1,5 @@
+from collections import Iterable
+
 import numpy as np
 from core.quantization.pq_quantizer import restore_from_clusters
 from sklearn.metrics import pairwise_distances
@@ -17,10 +19,11 @@ def l2_distance_matrix_computer_factory(computer_func_params):
     # TODO consider all cases
     if isinstance(X, np.ndarray):
         pass
-    elif isinstance(X, np.collections.Iterable):
+    elif isinstance(X, Iterable):
         X = list(X)
 
     def computer_(Q):
+        Q = np.array(Q, copy=False)
         Q = Q.reshape((len(Q), -1))
         distances_matrix = l2_distance_matrix(Q, X)
         return distances_matrix
