@@ -62,8 +62,12 @@ def gray_histogram_computer_factory(computer_func_params):
     return Computer(computer_, shape)
 
 
+vgg16_preload = VGG16()
+
+
 def vgg16_computer_factory(computer_func_params):
-    vgg16_model = VGG16()
+    # vgg16_model = VGG16()
+    vgg16_model = vgg16_preload
     layer_name = computer_func_params["layer_name"]
 
     def computer_(img_matrix_chunks):
