@@ -39,15 +39,23 @@ def gray_histogram_computer_factory(computer_func_params):
     density = computer_func_params["density"]
     n_values = 256
     bin_size = n_values // n_bins
-    # edges = [i * bin_size for i in range(n_bins)]
-    edges = np.arange(0, n_values - 1, bin_size)
+    # n_edges must be = n_bins + 1
+    edges = np.arange(0, n_values + 1, bin_size)
+    edges[n_bins] = n_values - 1
 
-    def computer_(img_matrix):
+    def computer_(img_matrix: np.ndarray):
         img_gray_matrix = iu.img_matrix_to_gray_img_matrix(img_matrix)
+        img_gray_matrix = img_gray_matrix.ravel()
         # iu.img_matrix_to_pil_image(img_gray_matrix).show()
         kwargs = computer_func_params["library_func_kwargs"]
 
-        histogram, edges_ = np.histogram(img_gray_matrix, bins=edges, density=density, **kwargs)
+        if bin_size == 1:
+            histogram = np.empty((n_values,), dtype=float)
+            histogram[...] = np.bincount(img_gray_matrix, minlength=n_values)
+            if density:
+                histogram /= img_gray_matrix.size
+        else:
+            histogram, edges_ = np.histogram(img_gray_matrix, bins=edges, density=density, **kwargs)
 
         # if first_hist is None:
         #     first_img = iu.img_matrix_to_pil_image(img_gray_matrix)
