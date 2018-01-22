@@ -150,7 +150,7 @@ def save_outputs(outputs, model):
             if "chunk_size" in model:
                 # print(outputs)
                 # print(next(outputs))
-                outputs=list(outputs)
+                outputs = list(outputs)
                 outputs = np.concatenate(outputs)
             elif isinstance(outputs, list):
                 outputs = np.array(outputs, copy=False)
