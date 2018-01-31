@@ -1,4 +1,6 @@
 import numpy as np
+from keras import backend
+
 from core.quantization.pq_quantizer import restore_from_clusters
 from keras.applications import VGG16
 from skimage.feature import greycomatrix, local_binary_pattern
@@ -70,12 +72,41 @@ def gray_histogram_computer_factory(computer_func_params):
     return Computer(computer_, shape)
 
 
-vgg16_preload = VGG16()
+import tensorflow as tf
+from keras.backend.tensorflow_backend import set_session, get_session
+
+
+def getVGG16():
+    print("getVGG16")
+    # setattr(tf.contrib.rnn.GRUCell, '__deepcopy__', lambda self, _: self)
+    # setattr(tf.contrib.rnn.BasicLSTMCell, '__deepcopy__', lambda self, _: self)
+    # setattr(tf.contrib.rnn.MultiRNNCell, '__deepcopy__', lambda self, _: self)
+    # config = tf.ConfigProto()
+    # config.gpu_options.per_process_gpu_memory_fraction = 0.5
+    # set_session(tf.Session(config=config))
+
+    print([dev.name for dev in backend.get_session().list_devices()])
+    # if getVGG16.model:
+    #     print("return cached")
+    #     return getVGG16.model
+    vgg16model = None
+    # with tf.Session() as sess:
+        # with tf.device("/cpu:0") as dev:
+        # print("backend.device")
+
+    getVGG16model = VGG16()
+    getVGG16model.summary()
+    print("return new")
+    vgg16model = getVGG16model
+    # get_session().close()
+    return vgg16model
+
+
+# getVGG16.model = None
 
 
 def vgg16_computer_factory(computer_func_params):
-    # vgg16_model = VGG16()
-    vgg16_model = vgg16_preload
+    vgg16_model = getVGG16()
     layer_name = computer_func_params["layer_name"]
 
     def computer_(img_matrix_chunks):
