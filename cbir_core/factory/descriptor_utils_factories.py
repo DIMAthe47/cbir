@@ -72,8 +72,8 @@ def gray_histogram_computer_factory(computer_func_params):
     return Computer(computer_, shape)
 
 
-import tensorflow as tf
-from keras.backend.tensorflow_backend import set_session, get_session
+# import tensorflow as tf
+# from keras.backend.tensorflow_backend import set_session, get_session
 
 
 def getVGG16():
@@ -86,23 +86,23 @@ def getVGG16():
     # set_session(tf.Session(config=config))
 
     print([dev.name for dev in backend.get_session().list_devices()])
-    # if getVGG16.model:
-    #     print("return cached")
-    #     return getVGG16.model
-    vgg16model = None
+    if getVGG16.model:
+        print("return cached")
+        return getVGG16.model
+    # vgg16model = None
     # with tf.Session() as sess:
-        # with tf.device("/cpu:0") as dev:
-        # print("backend.device")
+    # with tf.device("/cpu:0") as dev:
+    # print("backend.device")
 
-    getVGG16model = VGG16()
-    getVGG16model.summary()
+    getVGG16.model = VGG16()
+    # getVGG16.model.summary()
     print("return new")
-    vgg16model = getVGG16model
+    vgg16model = getVGG16.model
     # get_session().close()
     return vgg16model
 
 
-# getVGG16.model = None
+getVGG16.model = None
 
 
 def vgg16_computer_factory(computer_func_params):
