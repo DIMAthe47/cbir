@@ -78,28 +78,15 @@ def gray_histogram_computer_factory(computer_func_params):
 
 def getVGG16():
     print("getVGG16")
-    # setattr(tf.contrib.rnn.GRUCell, '__deepcopy__', lambda self, _: self)
-    # setattr(tf.contrib.rnn.BasicLSTMCell, '__deepcopy__', lambda self, _: self)
-    # setattr(tf.contrib.rnn.MultiRNNCell, '__deepcopy__', lambda self, _: self)
-    # config = tf.ConfigProto()
     # config.gpu_options.per_process_gpu_memory_fraction = 0.5
     # set_session(tf.Session(config=config))
-
-    print([dev.name for dev in backend.get_session().list_devices()])
+    # print([dev.name for dev in backend.get_session().list_devices()])
     if getVGG16.model:
         print("return cached")
         return getVGG16.model
-    # vgg16model = None
-    # with tf.Session() as sess:
-    # with tf.device("/cpu:0") as dev:
-    # print("backend.device")
-
     getVGG16.model = VGG16()
-    # getVGG16.model.summary()
     print("return new")
-    vgg16model = getVGG16.model
-    # get_session().close()
-    return vgg16model
+    return getVGG16.model
 
 
 getVGG16.model = None
