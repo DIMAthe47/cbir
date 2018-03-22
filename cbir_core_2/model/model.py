@@ -3,3 +3,4 @@ class Model:
         super().__init__()
         self.type = type
         self.name = name
+

@@ -8,11 +8,17 @@ from functools import singledispatch
 
 from PIL import Image
 
+from cbir_core_2.model.model import Model
+
 
 @singledispatch
 def to_json(val):
     """Used by default."""
-    return json.dumps(val, indent=4)
+    try:
+        json_ = json.dumps(val, indent=4)
+    except TypeError:
+        json_ = to_json(val)
+    return json_
 
 
 @to_json.register(Image.Image)
@@ -20,6 +26,23 @@ def pilimg_to_json(val):
     """Used if *val* is an instance of PIL.Image."""
     return "TODO"
 
+
+# @to_json.register(object)
+# def object_to_json(val):
+#     try:
+#         json_ = json.dumps(val, indent=4)
+#     except Exception:
+#         json_ = to_json(val)
+#     return json_
+
+
+@to_json.register(Model)
+def model_to_json(val):
+    try:
+        json_ = json.dumps(val, indent=4)
+    except Exception:
+        json_ = to_json(val.__dict__)
+    return json_
 
 class DSNotFoundError(Exception):
     def __init__(self, db_path, ds_name):
